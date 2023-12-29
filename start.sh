@@ -8,12 +8,17 @@ mkdir -p /run/clickhouse
 mkdir -p /run/tzdata/priv
 # Copy all files from our tzdata backup to the runtime location
 cp -a /app/code/tzdata_priv/. /run/tzdata/priv
+# Cache directory for Plausible's PERSISTENT_CACHE_DIR, an undocumented cache directory
+# that is currently only used to cache the MaxMind GeoIP Database. See:
+# https://github.com/plausible/analytics/blob/af6b578dc5dce94ec0bac6ab31f4be5bd8007ac3/config/runtime.exs#L232
+mkdir -p /run/plausible/cache_dir
 # This is the default run location for Supervisord, the process manager
 mkdir -p /run/supervisord/
 
 # Ensure that data directory is owned by 'cloudron' user, and clickhouse by 'clickhouse' user
 echo "=> Changing permissions"
 chown -R cloudron:cloudron /app/data
+chown -R cloudron:cloudron /run/plausible
 chown -R clickhouse:cloudron /app/data/clickhouse
 chown -R clickhouse:cloudron /run/clickhouse
 # These two are used for Plausible's lib/tzdata-1.1.1 libary, which requires read-write access
