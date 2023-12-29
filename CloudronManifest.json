@@ -1,0 +1,34 @@
+{
+  "id": "io.plausible.analytics",
+  "title": "Plausible Analytics",
+  "author": "Plausible Authors",
+  "description": "file://DESCRIPTION.md",
+  "changelog": "file://CHANGELOG",
+  "postInstallMessage": "file://POSTINSTALL.md",
+  "icon": "file://logo.png",
+  "tagline": "Easy to use, lightweight, open source and privacy-friendly analytics platform.",
+  "version": "0.1.0",
+  "upstreamVersion": "2.0.0",
+  "website": "https://plausible.io/",
+  "documentationUrl": "https://plausible.io/docs",
+  "healthCheckPath": "/api/health",
+  "httpPort": 8000,
+  "addons": {
+    "localstorage": {},
+    "postgresql": {},
+    "sendmail": {}
+  },
+  "tags": [
+    "analytics",
+    "tracking",
+    "profiling",
+    "tag manager"
+  ],
+  "mediaLinks": [
+    "https://plausible.io/assets/images/privacy-focused-web-analytics.png"
+  ],
+  "memoryLimit": 4294967296,
+  "minBoxVersion": "7.6.0",
+  "targetBoxVersion": "7.6.3",
+  "manifestVersion": 2
+}

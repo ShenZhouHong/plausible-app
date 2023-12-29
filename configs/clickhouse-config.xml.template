@@ -1,0 +1,106 @@
+<clickhouse>
+    <!-- Default database. -->
+    <default_database>plausible_events_db</default_database>
+
+    <!-- Only listen on localhost IPv4 and IPv6 -->
+    <listen_host>::1</listen_host>
+    <listen_host>127.0.0.1</listen_host>
+    <http_port>8123</http_port>
+
+    <!-- Data Directory Paths. Note: all directory paths REQUIRE a trailing slash -->
+    <path>/app/data/clickhouse/</path>
+    <!-- Path to temporary data for processing hard queries. -->
+    <tmp_path>/tmp/</tmp_path>
+    <!-- Directory with user provided files that are accessible by 'file' table function. -->
+    <user_files_path>/app/data/clickhouse/user_files/</user_files_path>
+
+    <!-- Add headers to response in options request. OPTIONS method is used in CORS preflight requests. -->
+    <http_options_response>
+        <header>
+            <name>Access-Control-Allow-Origin</name>
+            <value>*</value>
+        </header>
+        <header>
+            <name>Access-Control-Allow-Headers</name>
+            <value>origin, x-requested-with, x-clickhouse-format, x-clickhouse-user, x-clickhouse-key, Authorization</value>
+        </header>
+        <header>
+            <name>Access-Control-Allow-Methods</name>
+            <value>POST, GET, OPTIONS</value>
+        </header>
+        <header>
+            <name>Access-Control-Max-Age</name>
+            <value>86400</value>
+        </header>
+    </http_options_response>
+
+    <!-- Connection Profiles -->
+    <profiles>
+        <default>
+            <log_queries>0</log_queries>
+            <log_query_threads>0</log_query_threads>
+        </default>
+    </profiles>
+
+    <!-- 
+        Even though Clickhouse is configured to only listen on localhost, we
+        will require password authentication with a unique password.
+    -->
+    <allow_plaintext_password>0</allow_plaintext_password>
+    <allow_no_password>0</allow_no_password>
+    <allow_implicit_no_password>0</allow_implicit_no_password>
+
+    <!-- Users and ACL. -->
+    <users>
+        <!-- If user name was not specified, 'default' user is used. -->
+        <default>
+            <!-- 
+                Generated using:
+                PASSWORD=$(base64 < /dev/urandom | head -c20); echo "$PASSWORD"; echo -n "$PASSWORD" |
+ sha256sum | tr -d '-'
+                See https://github.com/ClickHouse/ClickHouse/blob/master/programs/server/users.xml 
+            -->
+            <password_sha256_hex></password_sha256_hex>
+
+            <!-- Only allow default user access from localhost (IPv4, IPv6)-->
+            <networks>
+                <ip>127.0.0.1</ip>
+                <ip>::1</ip>
+            </networks>
+
+            <!-- Settings profile for user. -->
+            <profile>default</profile>
+
+            <!-- Quota for user. -->
+            <quota>default</quota>
+
+            <!-- User can create other users and grant rights to them. -->
+            <access_management>1</access_management>
+
+            <!-- User can manipulate named collections. -->
+            <named_collection_control>1</named_collection_control>
+        </default>
+    </users>
+
+    <!-- Configure Clickhouse logging -->
+    <logger>
+        <level>information</level>
+        <!-- Output logs to STDOUT, as per Cloudron best practices -->
+        <console>true</console>
+
+        <!-- Additionally also make sure to log to Cloudron Directories -->
+        <log>/run/clickhouse/clickhouse-server.log</log>
+        <errorlog>/run/clickhouse/clickhouse-server.err.log</errorlog>
+    </logger>
+
+    <!-- Stop all the unnecessary logging -->
+    <!-- <query_thread_log remove="remove"/>
+    <query_log remove="remove"/>
+    <text_log remove="remove"/>
+    <trace_log remove="remove"/>
+    <metric_log remove="remove"/>
+    <asynchronous_metric_log remove="remove"/>
+    <session_log remove="remove"/>
+    <part_log remove="remove"/> -->
+
+</clickhouse>
