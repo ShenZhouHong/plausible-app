@@ -66,6 +66,8 @@ Additional documentation about the tests are available [at the following locatio
 
 Please note that this custom Cloudron application is currently in beta, and not yet suitable for production deployments. It is currently made available for testing purposes. Your data may be at risk.
 
+ - [ ] Fix tzdata write access issue
+ - [ ] Fix locus geolocation database cache write access issue
  - [ ] Manage Clickhouse database backups using dump/restore
  - [ ] Write automated application lifecycle tests
  - [ ] Create Clickhouse addon to enable native Cloudron support
