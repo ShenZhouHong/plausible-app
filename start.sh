@@ -4,9 +4,10 @@ set -eEu -o pipefail
 echo "=> Creating directories and files (if they do not already exist)"
 mkdir -p /app/data/clickhouse /app/data/clickhouse/user_files /app/data/plausible
 mkdir -p /run/clickhouse
-# These two are used for Plausible's lib/tzdata-1.1.1 libary, which requires read-write access
-mkdir -p /run/tmp_downloads
-touch /run/latest_remote_poll.txt
+# These are used for Plausible's lib/tzdata-1.1.1 libary, which requires read-write access
+mkdir -p /run/tzdata/priv
+# Copy all files from our tzdata backup to the runtime location
+cp -a /app/code/tzdata_priv/. /run/tzdata/priv
 # This is the default run location for Supervisord, the process manager
 mkdir -p /run/supervisord/
 
@@ -16,8 +17,7 @@ chown -R cloudron:cloudron /app/data
 chown -R clickhouse:cloudron /app/data/clickhouse
 chown -R clickhouse:cloudron /run/clickhouse
 # These two are used for Plausible's lib/tzdata-1.1.1 libary, which requires read-write access
-chown -R cloudron:cloudron /run/tmp_downloads
-chown cloudron:cloudron /run/latest_remote_poll.txt
+chown -R cloudron:cloudron /run/tzdata
 # This is the default log location for Supervisord, the process manager
 chown -R cloudron:cloudron /run/supervisord/
 
@@ -65,5 +65,5 @@ source /app/data/plausible-config.env
 echo "=> Starting Clickhouse Database and Plausible Server via Supervisord"
 # Here we won't use exec /usr/local/bin/gosu cloudron:cloudron [command] because
 # Supervisord will take care of dropping privileges for us. See: supervisord.conf
-exec  supervisord --configuration=/app/code/supervisord.conf --nodaemon
+exec supervisord --configuration=/app/code/supervisord.conf --nodaemon
 

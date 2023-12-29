@@ -49,12 +49,19 @@ WORKDIR /app/code/plausible
 ARG VERSION=plausible-ubuntu-build-3
 RUN curl -L https://github.com/ShenZhouHong/plausible-ubuntu-binaries/releases/download/${VERSION}/plausible-ubuntu-binary.tar.gz | tar -xz --strip-components 1 -f -
 
-# The tzdata library that Plausible depends on requires read/write access. Symlink it to /run/
-RUN mkdir -p /run/tmp_downloads \
-    && rm -r /app/code/plausible/lib/tzdata-1.1.1/priv/tmp_downloads \
-    && ln -s /run/tmp_downloads /app/code/plausible/lib/tzdata-1.1.1/priv/tmp_downloads
-RUN rm /app/code/plausible/lib/tzdata-1.1.1/priv/latest_remote_poll.txt \
-    && ln -s /run/latest_remote_poll.txt /app/code/plausible/lib/tzdata-1.1.1/priv/latest_remote_poll.txt
+# The tzdata library that Plausible depends on requires read/write access to itself. Symlink it to /run/
+RUN mkdir -p /run/tzdata/priv \
+    && mv -v /app/code/plausible/lib/tzdata-1.1.1/priv /app/code/tzdata_priv \
+    && ln -s /run/tzdata/priv /app/code/plausible/lib/tzdata-1.1.1/priv
+
+# RUN mkdir -p /run/tmp_downloads \
+#     && rm -r /app/code/plausible/lib/tzdata-1.1.1/priv/tmp_downloads \
+#     && ln -s /run/tmp_downloads /app/code/plausible/lib/tzdata-1.1.1/priv/tmp_downloads
+# RUN mkdir -p /run/release_ets \
+#     && mv /app/code/plausible/lib/tzdata-1.1.1/priv/release_ets /app/code/release_ets \
+#     && ln -s /run/release_ets /app/code/plausible/lib/tzdata-1.1.1/priv/release_ets
+# RUN mv /app/code/plausible/lib/tzdata-1.1.1/priv/latest_remote_poll.txt /run/latest_remote_poll.txt \
+#     && ln -s /run/latest_remote_poll.txt /app/code/plausible/lib/tzdata-1.1.1/priv/latest_remote_poll.txt
 
 # Now it is time to copy the template configuration files from ./config/. These will be initialized upon
 # installation via start.sh
