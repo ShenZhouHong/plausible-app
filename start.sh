@@ -4,14 +4,11 @@ set -eEu -o pipefail
 echo "=> Creating directories and files (if they do not already exist)"
 mkdir -p /app/data/clickhouse /app/data/clickhouse/user_files /app/data/plausible
 mkdir -p /run/clickhouse
-# These are used for Plausible's lib/tzdata-1.1.1 libary, which requires read-write access
-mkdir -p /run/tzdata/priv
-# Copy all files from our tzdata backup to the runtime location
-cp -a /app/code/tzdata_priv/. /run/tzdata/priv
-# Cache directory for Plausible's PERSISTENT_CACHE_DIR, an undocumented cache directory
-# that is currently only used to cache the MaxMind GeoIP Database. See:
+# Plausible requires a PERSISTENT_CACHE_DIR and STORAGE_DIR. These are undocumented
+# environment variables used to cache the MaxMind GeoIP Database, and for tzdata. See:
 # https://github.com/plausible/analytics/blob/af6b578dc5dce94ec0bac6ab31f4be5bd8007ac3/config/runtime.exs#L232
-mkdir -p /run/plausible/cache_dir
+# https://github.com/plausible/analytics/pull/1096
+mkdir -p /run/plausible/cache_dir /run/plausible/storage_dir
 # This is the default run location for Supervisord, the process manager
 mkdir -p /run/supervisord/
 
@@ -21,8 +18,6 @@ chown -R cloudron:cloudron /app/data
 chown -R cloudron:cloudron /run/plausible
 chown -R clickhouse:cloudron /app/data/clickhouse
 chown -R clickhouse:cloudron /run/clickhouse
-# These two are used for Plausible's lib/tzdata-1.1.1 libary, which requires read-write access
-chown -R cloudron:cloudron /run/tzdata
 # This is the default log location for Supervisord, the process manager
 chown -R cloudron:cloudron /run/supervisord/
 
