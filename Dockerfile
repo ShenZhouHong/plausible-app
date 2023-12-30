@@ -54,7 +54,7 @@ RUN curl -L https://github.com/ShenZhouHong/plausible-ubuntu-binaries/releases/d
 WORKDIR /app/code
 ADD --chown=cloudron ./configs/clickhouse-config.xml.template ./configs/plausible-config.env.template ./configs/secrets.env.template /app/code/
 # Copy the supervisord configuration file
-ADD --chown=cloudron ./configs/supervisord.conf /app/code/
+ADD --chown=cloudron ./configs/supervisord.conf.template /app/code/
 # Add start script. This contains setup and initialization code
 ADD --chown=cloudron start.sh /app/code/
 

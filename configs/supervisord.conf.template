@@ -7,9 +7,9 @@
 [unix_http_server]
 file=/run/supervisord/supervisor.sock   ; the path to the socket file
 chown=cloudron:cloudron       ; socket file uid:gid owner
-;chmod=0700                 ; socket file mode (default 0700)
-;username=user              ; default is no username (open server)
-;password=123               ; default is no password (open server)
+; These are used by supervisorctl to authentcate with the supervisord daemon
+username=cloudron_supervisord
+password=PASSWORD_TEMPLATE 
 
 [supervisord]
 pidfile=/run/supervisord/supervisord.pid ; supervisord pidfile; default supervisord.pid
@@ -44,10 +44,10 @@ supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
 ; or inet_http_server section.
 [supervisorctl]
 serverurl=unix:///run/supervisord/supervisor.sock ; use a unix:// URL  for a unix socket
-;username=chris              ; should be same as in [*_http_server] if set
-;password=123                ; should be same as in [*_http_server] if set
-;prompt=mysupervisor         ; cmd line prompt (default "supervisor")
-;history_file=~/.sc_history  ; use readline history if available
+username=cloudron_supervisord ; should be same as in [*_http_server] if set
+password=PASSWORD_TEMPLATE    ; should be same as in [*_http_server] if set
+;prompt=mysupervisor          ; cmd line prompt (default "supervisor")
+;history_file=~/.sc_history   ; use readline history if available
 
 ; The sample program section below shows all possible program subsection values.
 ; Create one or more 'real' program: sections to be able to control them under

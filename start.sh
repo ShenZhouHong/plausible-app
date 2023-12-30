@@ -27,6 +27,7 @@ if [ ! -e /app/data/secrets.env ]; then
 	cp /app/code/secrets.env.template /app/data/secrets.env
     cp /app/code/plausible-config.env.template /app/data/plausible-config.env
     cp /app/code/clickhouse-config.xml.template /app/data/clickhouse-config.xml
+    cp /app/code/supervisord.conf.template /app/data/supervisord.conf
 
     echo "=> Provisioning secret keys on first run"
     sed -i "s/SECRET_KEY_BASE=/SECRET_KEY_BASE=$(openssl rand -hex 64)/" /app/data/secrets.env
@@ -38,6 +39,10 @@ if [ ! -e /app/data/secrets.env ]; then
     sed -i "s/CLICKHOUSE_DB_PASSWORD=/CLICKHOUSE_DB_PASSWORD=${CLICKHOUSE_DB_PASSWORD}/" /app/data/secrets.env
     sed -i "s/CLICKHOUSE_DB_PASSWORD/${CLICKHOUSE_DB_PASSWORD}/" /app/data/plausible-config.env
     sed -i "s/<password_sha256_hex>/<password_sha256_hex>${CLICKHOUSE_DB_PASSWORD_HASH}/" /app/data/clickhouse-config.xml
+    # Login password for 'cloudron_supervisord' account on Supervisord [unix_http_server]
+    SUPERVISORD_PASSWORD=$(openssl rand -hex 32)
+    sed -i "s/SUPERVISORD_PASSWORD=/SUPERVISORD_PASSWORD=${SUPERVISORD_PASSWORD}/g" /app/data/secrets.env
+    sed -i "s/PASSWORD_TEMPLATE/${SUPERVISORD_PASSWORD}/g" /app/data/supervisord.conf
 
     echo "=> Initializing Plausible's databases on first run"    
     # Temporarily start the clickhouse DBMS for migrations
@@ -65,5 +70,5 @@ source /app/data/plausible-config.env
 echo "=> Starting Clickhouse Database and Plausible Server via Supervisord"
 # Here we won't use exec /usr/local/bin/gosu cloudron:cloudron [command] because
 # Supervisord will take care of dropping privileges for us. See: supervisord.conf
-exec supervisord --configuration=/app/code/supervisord.conf --nodaemon
+exec supervisord --configuration=/app/data/supervisord.conf --nodaemon
 
