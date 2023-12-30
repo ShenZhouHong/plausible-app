@@ -24,6 +24,20 @@
     <access_control_path>/app/data/clickhouse/access/</access_control_path>
     <format_schema_path>/app/data/clickhouse/format_schemas/</format_schema_path>
 
+    <!-- Configure Clickhouse for Backups -->
+    <storage_configuration>
+        <disks>
+            <backups>
+                <type>local</type>
+                <path>/app/data/clickhouse/backups/</path>
+            </backups>
+        </disks>
+    </storage_configuration>
+    <backups>
+        <allowed_disk>backups</allowed_disk>
+        <allowed_path>/app/data/clickhouse/backups/</allowed_path>
+    </backups>
+
     <!-- Add headers to response in options request. OPTIONS method is used in CORS preflight requests. -->
     <http_options_response>
         <header>

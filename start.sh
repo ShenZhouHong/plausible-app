@@ -8,6 +8,7 @@ mkdir -p /app/data/clickhouse \
     /app/data/clickhouse/user_scripts \
     /app/data/clickhouse/user_defined \
     /app/data/clickhouse/access \
+    /app/data/clickhouse/backups \
     /app/data/clickhouse/format_schemas 
 mkdir -p /run/clickhouse
 
@@ -32,7 +33,9 @@ chown -R clickhouse:cloudron /run/clickhouse
 chown -R cloudron:cloudron /run/supervisord/
 
 # Initialization code that will run only once upon installation
-if [ ! -e /app/data/secrets.env ]; then
+if [ ! -f /app/data/.initialized ]; then
+    echo "=> Initializing first-time installation"    
+
     echo "=> Creating initial templates on first run"
 	cp /app/code/secrets.env.template /app/data/secrets.env
     cp /app/code/plausible-config.env.template /app/data/plausible-config.env
@@ -67,11 +70,19 @@ if [ ! -e /app/data/secrets.env ]; then
     source /app/data/secrets.env
     source /app/data/plausible-config.env
 
-    # migrate.sh will exit with a non-zero exit code which we can safely ignore
+    # The migrate.sh script will exit with a non-zero exit code which we can safely ignore
     /app/code/plausible/migrate.sh > "/run/plausible/migrations.log" 2>&1 || true
+
+    # Perform first backup of clickhouse database. This will be the base backup needed incremental backups
+    echo "=> Performing first backup of Clickhouse database"    
+    /app/code/clickhouse-backup.sh > "/run/clickhouse/backups.log" 2>&1
 
     # Kill clickhouse
     kill -TERM $(< /run/clickhouse/clickhouse-server.pid)
+    rm -f /run/clickhouse/clickhouse-server.pid
+
+    echo "=> First-time install initialization complete"
+    echo 'true' > /app/data/.initialized
 fi
 
 # Load secrets and configuration options

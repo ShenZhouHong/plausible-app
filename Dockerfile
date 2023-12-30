@@ -54,6 +54,9 @@ RUN curl -L https://github.com/ShenZhouHong/plausible-ubuntu-binaries/releases/d
 WORKDIR /app/code
 ADD --chown=cloudron ./configs/*.template /app/code/
 
+# Custom scripts to Backup and Restore Clickhouse Database
+ADD --chown=cloudron ./clickhouse-backup.sh ./clickhouse-restore.sh /app/code/
+
 # Add start script. This contains setup and initialization code
 ADD --chown=cloudron start.sh /app/code/
 
