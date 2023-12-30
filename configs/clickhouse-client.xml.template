@@ -1,0 +1,15 @@
+<!-- 
+    Connection settings for Clickhouse Client 
+    Used to connect to the clickhouse database via
+    clickhouse-client \-\-config-file /app/data/clickhouse-client.xml 
+-->
+
+<config>
+    <host>127.0.0.1</host>
+    <port>9000</port>
+    <user>default</user>
+    <password>PASSWORD_TEMPLATE</password>
+    <!-- We are not using TLS -->
+    <secure>0</secure>
+    <database>plausible_events_db</database>
+</config>

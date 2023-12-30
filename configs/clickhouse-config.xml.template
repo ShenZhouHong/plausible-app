@@ -5,14 +5,24 @@
     <!-- Only listen on localhost IPv4 and IPv6 -->
     <listen_host>::1</listen_host>
     <listen_host>127.0.0.1</listen_host>
+
+    <!-- Port for HTTP API. This is used by Plausible -->
     <http_port>8123</http_port>
+
+    <!-- Port for interaction by native protocol. This is used by clickhouse-client -->
+    <tcp_port>9000</tcp_port>
 
     <!-- Data Directory Paths. Note: all directory paths REQUIRE a trailing slash -->
     <path>/app/data/clickhouse/</path>
     <!-- Path to temporary data for processing hard queries. -->
     <tmp_path>/tmp/</tmp_path>
-    <!-- Directory with user provided files that are accessible by 'file' table function. -->
+
+    <!-- Directories for user files and other misc. Clickhouse data. -->
     <user_files_path>/app/data/clickhouse/user_files/</user_files_path>
+    <user_scripts_path>/app/data/clickhouse/user_scripts/</user_scripts_path>
+    <user_defined_path>/app/data/clickhouse/user_defined/</user_defined_path>
+    <access_control_path>/app/data/clickhouse/access/</access_control_path>
+    <format_schema_path>/app/data/clickhouse/format_schemas/</format_schema_path>
 
     <!-- Add headers to response in options request. OPTIONS method is used in CORS preflight requests. -->
     <http_options_response>
@@ -60,7 +70,7 @@
  sha256sum | tr -d '-'
                 See https://github.com/ClickHouse/ClickHouse/blob/master/programs/server/users.xml 
             -->
-            <password_sha256_hex></password_sha256_hex>
+            <password_sha256_hex>PASSWORD_HASH_TEMPLATE</password_sha256_hex>
 
             <!-- Only allow default user access from localhost (IPv4, IPv6)-->
             <networks>

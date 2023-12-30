@@ -1,6 +1,6 @@
 FROM cloudron/base:4.2.0@sha256:46da2fffb36353ef714f97ae8e962bd2c212ca091108d768ba473078319a47f4
 
-RUN mkdir -p /app/code/clickhouse /app/code/plausible /app/data
+RUN mkdir -p /app/code/plausible /app/data
 
 # Prerequisites
 RUN apt-get update && apt-get install -y \
@@ -49,14 +49,15 @@ WORKDIR /app/code/plausible
 ARG VERSION=plausible-ubuntu-build-3
 RUN curl -L https://github.com/ShenZhouHong/plausible-ubuntu-binaries/releases/download/${VERSION}/plausible-ubuntu-binary.tar.gz | tar -xz --strip-components 1 -f -
 
-# Now it is time to copy the template configuration files from ./config/. These will be initialized upon
-# installation via start.sh
+# Now it is time to copy all template configuration files from ./config/. These will be initialized 
+# upon first installation via start.sh
 WORKDIR /app/code
-ADD --chown=cloudron ./configs/clickhouse-config.xml.template ./configs/plausible-config.env.template ./configs/secrets.env.template /app/code/
-# Copy the supervisord configuration file
-ADD --chown=cloudron ./configs/supervisord.conf.template /app/code/
+ADD --chown=cloudron ./configs/*.template /app/code/
+
 # Add start script. This contains setup and initialization code
 ADD --chown=cloudron start.sh /app/code/
 
+# Get ready for start
+WORKDIR /app/data
 EXPOSE 8000
 CMD [ "/app/code/start.sh" ]
