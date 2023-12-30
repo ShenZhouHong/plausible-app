@@ -12,4 +12,5 @@
     <!-- We are not using TLS -->
     <secure>0</secure>
     <database>plausible_events_db</database>
+    <history_file>/run/clickhouse/clickhouse-client-history.log</history_file>
 </config>

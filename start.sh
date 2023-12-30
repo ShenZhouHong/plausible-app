@@ -68,7 +68,7 @@ if [ ! -e /app/data/secrets.env ]; then
     source /app/data/plausible-config.env
 
     # migrate.sh will exit with a non-zero exit code which we can safely ignore
-    /app/code/plausible/migrate.sh > "/run/migrations.log" 2>&1 || true
+    /app/code/plausible/migrate.sh > "/run/plausible/migrations.log" 2>&1 || true
 
     # Kill clickhouse
     kill -TERM $(< /run/clickhouse/clickhouse-server.pid)
