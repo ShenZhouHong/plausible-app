@@ -62,6 +62,12 @@ USERNAME=<cloudron username> PASSWORD=<cloudron password> mocha test.js
 
 Additional documentation about the tests are available [at the following location](./test/README.md).
 
+## Database Backups
+
+The Clickhouse installation on this Cloudron app is bundled with `clickhouse-client`, a command line tool used to access the database. Backups and restores of the `plausible_events_db` database can be performed using the `clickhouse-backup.sh` and `clickhouse-restore.sh` scripts located at `/app/code/`.
+
+Backups are stored to `/app/data/clickhouse/backups` with the naming convention `plausible_events_db-0.zip`
+
 ## To-Do List
 
 Please note that this custom Cloudron application is currently in beta, and not yet suitable for production deployments. It is currently made available for testing purposes. Your data may be at risk.

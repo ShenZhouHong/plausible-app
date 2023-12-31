@@ -65,6 +65,7 @@ if [ ! -f /app/data/.initialized ]; then
     echo "=> Initializing Plausible's databases on first run"    
     # Temporarily start the clickhouse DBMS for migrations
     sudo --preserve-env -u 'clickhouse' /usr/bin/clickhouse-server --config-file /app/data/clickhouse-config.xml --pid-file /run/clickhouse/clickhouse-server.pid --daemon
+    sleep 5 # Give clickhouse ample time to startup.
 
     # Source the environment variables. These will become undefined once we are out of the if/fi block
     source /app/data/secrets.env
