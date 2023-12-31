@@ -10,8 +10,7 @@
 
 set -eEu -o pipefail
 
-# We disable incremental backups for now, since something weird is happening w/ them
-incremental=false
+incremental=true
 
 backups_path="/app/data/clickhouse/backups"
 
@@ -51,4 +50,4 @@ echo "=> Backing up clickhouse database with clickhouse-client"
 # Run the backup
 /usr/bin/clickhouse-client \
     --config-file /app/data/clickhouse-client.xml \
-    --query "${query_str}" \
+    --query "${query_str}"

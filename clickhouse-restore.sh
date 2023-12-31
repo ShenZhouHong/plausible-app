@@ -40,4 +40,4 @@ echo "${query_str}"
 # Run the restore
 /usr/bin/clickhouse-client \
     --config-file /app/data/clickhouse-client.xml \
-    --multiquery "${query_str}" \
+    --multiquery "${query_str}"

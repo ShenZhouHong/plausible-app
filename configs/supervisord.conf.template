@@ -23,8 +23,8 @@ silent=false                 ; no logs to stdout if true; default false
 minfds=1024                  ; min. avail startup file descriptors; default 1024
 minprocs=200                 ; min. avail process descriptors;default 200
 ; We run the supervisord daemon as root, because we are dropping privileges later in
-; the [program:plausible] and [program:clickbase] sections using the user directive.
-; This is not a security issue as the actual plausible and clickbase daemons are run as
+; the [program:plausible] and [program:clickhouse] sections using the user directive.
+; This is not a security issue as the actual plausible and clickhouse daemons are run as
 ; less privileged accounts
 user=root                    ; setuid to this UNIX account at startup; recommended if root
 childlogdir=/tmp             ; 'AUTO' child log dir, default $TEMP
@@ -53,13 +53,13 @@ password=PASSWORD_TEMPLATE    ; should be same as in [*_http_server] if set
 ; Create one or more 'real' program: sections to be able to control them under
 ; supervisor.
 
-[program:clickbase]
+[program:clickhouse]
 command=/usr/bin/clickhouse-server --config-file /app/data/clickhouse-config.xml --pid-file /run/clickhouse/clickhouse-server.pid
 user=clickhouse
 priority=1
 autostart=true
 autorestart=true
-startsecs=5
+startsecs=2
 ; We will have Docker manage the log outputs. See:
 ; https://veithen.io/2015/01/08/supervisord-redirecting-stdout.html
 stdout_logfile=/dev/stdout
@@ -67,13 +67,30 @@ stdout_logfile_maxbytes=0
 stderr_logfile=/dev/stderr
 stderr_logfile_maxbytes=0
 
+; The clickhouse-dataloader script is meant to load and unload the plausible_events_db
+; from backups in /app/data/plausible to Clickhouse's runtime location at /run/clickhouse
+; Unfortunately it does not work, so this is currently commented out.
+; [program:clickhouse-dataloader]
+; command=/app/code/clickhouse-dataloader.sh
+; user=cloudron
+; priority=2
+; autostart=true
+; autorestart=true
+; startsecs=3
+; ; We will have Docker manage the log outputs. See:
+; ; https://veithen.io/2015/01/08/supervisord-redirecting-stdout.html
+; stdout_logfile=/dev/stdout
+; stdout_logfile_maxbytes=0
+; stderr_logfile=/dev/stderr
+; stderr_logfile_maxbytes=0
+
 [program:plausible]
 command=/app/code/plausible/bin/plausible start
 user=cloudron
-priority=2
+priority=3
 autostart=true
 autorestart=true
-startsecs=5
+startsecs=2
 ; We will have Docker manage the log outputs. See:
 ; https://veithen.io/2015/01/08/supervisord-redirecting-stdout.html
 stdout_logfile=/dev/stdout

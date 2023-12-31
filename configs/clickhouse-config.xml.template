@@ -14,6 +14,7 @@
 
     <!-- Data Directory Paths. Note: all directory paths REQUIRE a trailing slash -->
     <path>/app/data/clickhouse/</path>
+    <!-- <path>/run/clickhouse/</path> -->
     <!-- Path to temporary data for processing hard queries. -->
     <tmp_path>/tmp/</tmp_path>
 

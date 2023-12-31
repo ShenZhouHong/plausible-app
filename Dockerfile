@@ -1,5 +1,10 @@
 FROM cloudron/base:4.2.0@sha256:46da2fffb36353ef714f97ae8e962bd2c212ca091108d768ba473078319a47f4
 
+# We need pre-compiled binaries for the Plausible Analytics server. As the team at Plausible.io
+# does not currently provide them, the user has to provide their own pre-compiled binaries.
+ARG VERSION=plausible-ubuntu-build-3
+ARG PLAUSIBLE_BINARY_LINK=https://github.com/ShenZhouHong/plausible-ubuntu-binaries/releases/download/${VERSION}/plausible-ubuntu-binary.tar.gz
+
 RUN mkdir -p /app/code/plausible /app/data
 
 # Prerequisites
@@ -46,8 +51,7 @@ RUN usermod -a -G cloudron clickhouse
 
 # Download Pre-compiled Plausible Analytics Binary
 WORKDIR /app/code/plausible
-ARG VERSION=plausible-ubuntu-build-3
-RUN curl -L https://github.com/ShenZhouHong/plausible-ubuntu-binaries/releases/download/${VERSION}/plausible-ubuntu-binary.tar.gz | tar -xz --strip-components 1 -f -
+RUN curl -L ${PLAUSIBLE_BINARY_LINK} | tar -xz --strip-components 1 -f -
 
 # Now it is time to copy all template configuration files from ./config/. These will be initialized 
 # upon first installation via start.sh
@@ -55,10 +59,14 @@ WORKDIR /app/code
 ADD --chown=cloudron ./configs/*.template /app/code/
 
 # Custom scripts to Backup and Restore Clickhouse Database
-ADD --chown=cloudron ./clickhouse-backup.sh ./clickhouse-restore.sh /app/code/
+ADD --chown=cloudron \
+    ./clickhouse-backup.sh \
+    ./clickhouse-restore.sh \
+    ./clickhouse-dataloader.sh \
+    /app/code/
 
-# Add start script. This contains setup and initialization code
-ADD --chown=cloudron start.sh /app/code/
+# Add start.sh and initial-setup.sh. These contain the runtime and first-install initialization code.
+ADD --chown=cloudron start.sh initial-setup.sh /app/code/
 
 # Get ready for start
 WORKDIR /app/data
