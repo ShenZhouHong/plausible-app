@@ -22,7 +22,9 @@ Note that we do not use `exec /usr/local/bin/gosu cloudron:cloudron supervisord`
 
 Plausible is configured using environment variables that are exported, and then added to the shell environment using `source`. The template for Plausible-specific configuration settings are found at `./configs/plausible-config.env.template`, which are then populated by the `./start.sh` script during first startup. Secrets are likewise found in `./config/secrets.env.template` which are also generated upon first startup by `./start.sh`.
 
-Clickhouse is configured using `./config/clickhouse-config.xml.template`. The clickhouse configuration re-maps the default paths to Cloudron's writeable directories.
+Clickhouse is configured using `./config/clickhouse-config.xml.template`. The clickhouse configuration re-maps the default paths to Cloudron's writeable directories. 
+
+Upon first installation, these configuration files are provisioned by the setup script at `./initial-setup.sh`. Said script also generates secret keys and performs initial database setup.
 
 Additional documentation on configuration files are [available here](./configs/README.md).
 
@@ -38,15 +40,29 @@ This custom Cloudron app has not yet been published to the official Cloudron app
 
 The easiest way to do this is to use Cloudron's pre-packaged [Private Docker Registry](https://docs.cloudron.io/apps/docker-registry/) app.
 
-## Building
-The app package can be built using the [Cloudron command line tooling](https://cloudron.io/references/cli.html).
+### Build
 
-### Build and Push to Private Docker Registry
+The app package can be built using the [Cloudron command line tooling](https://cloudron.io/references/cli.html).
 
 ```bash
 cd plausible-app
 cloudron build
-cloudron install --image registry.example.com/plausible-app:${TAG}
+```
+
+### Install
+
+Make sure to replace `${TAG}` with the docker tag of your latest build.
+
+```bash
+cloudron install --location plausible.example.com --image registry.example.com/plausible-app:${TAG}
+```
+
+### Upgrade
+
+Make sure to replace `${TAG}` with the docker tag of your latest build.
+
+```bash
+cloudron update --app plausible.example.com --image registry.example.com/plausible-app:${TAG}
 ```
 
 ## Testing
