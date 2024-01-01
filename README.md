@@ -2,6 +2,37 @@
 
 This repository contains the [Cloudron](cloudron.io) app package source for the [Plausible Analytics](https://github.com/plausible/analytics). [Plausible](https://plausible.io/) is an easy to use, lightweight (< 1 KB), open source and privacy-friendly alternative to Google Analytics. It doesn’t use cookies and is fully compliant with GDPR, CCPA and PECR.
 
+## Installation
+
+This custom Cloudron app has not yet been published to the official Cloudron app store. Hence in order to install it to your Cloudron instance, you must first build and deploy it to a private docker registry.
+
+The easiest way to do this is to use Cloudron's pre-packaged [Private Docker Registry](https://docs.cloudron.io/apps/docker-registry/) app.
+
+### Build
+
+The app package can be built using the [Cloudron command line tooling](https://cloudron.io/references/cli.html).
+
+```bash
+cd plausible-app
+cloudron build
+```
+
+### Install
+
+Make sure to replace `${TAG}` with the docker tag of your latest build.
+
+```bash
+cloudron install --location plausible.example.com --image registry.example.com/plausible-app:${TAG}
+```
+
+### Upgrade
+
+Make sure to replace `${TAG}` with the docker tag of your latest build.
+
+```bash
+cloudron update --app plausible.example.com --image registry.example.com/plausible-app:${TAG}
+```
+
 ## Overview
 
 The Plausible analytics server depends upon two databases: PostgreSQL for user data, and Clickhouse for analytics data. PostgreSQL is already made available via Cloudron's native PostgreSQL addon. As a result, this app packages Clickhouse within itself for Plausible.
@@ -33,37 +64,6 @@ Additional documentation on configuration files are [available here](./configs/R
 This Cloudron app package is unusual, because it depends upon an additional repository as a source of pre-built Plausible binaries for Ubuntu Linux. Plausible Analytics is a compiled Elixir/Erlang application, that cannot be run directly from the upstream source code. Plausible's authors does not currently provide pre-built binaries. As a result, the Dockerfile pulls pre-built binaries from the following unofficial repository.
 
 * https://github.com/ShenZhouHong/plausible-ubuntu-binaries
-
-## Installation
-
-This custom Cloudron app has not yet been published to the official Cloudron app store. Hence in order to install it to your Cloudron instance, you must first build and deploy it to a private docker registry.
-
-The easiest way to do this is to use Cloudron's pre-packaged [Private Docker Registry](https://docs.cloudron.io/apps/docker-registry/) app.
-
-### Build
-
-The app package can be built using the [Cloudron command line tooling](https://cloudron.io/references/cli.html).
-
-```bash
-cd plausible-app
-cloudron build
-```
-
-### Install
-
-Make sure to replace `${TAG}` with the docker tag of your latest build.
-
-```bash
-cloudron install --location plausible.example.com --image registry.example.com/plausible-app:${TAG}
-```
-
-### Upgrade
-
-Make sure to replace `${TAG}` with the docker tag of your latest build.
-
-```bash
-cloudron update --app plausible.example.com --image registry.example.com/plausible-app:${TAG}
-```
 
 ## Testing
 
