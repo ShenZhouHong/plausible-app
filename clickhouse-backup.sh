@@ -34,14 +34,16 @@ counter=$(find "${backups_path}" -type f -name '*.zip' | wc --lines)
 # Template the correct query string
 if [ "$counter" -eq 0 ] || [ "$incremental" = false ]; then
     # Query for a full backup
-    current_backup_name="plausible_events_db-0.zip"
     echo "=> Performing full backup: ${current_backup_name}"
+    current_backup_name="plausible_events_db-0.zip"
+
     query_str="BACKUP DATABASE plausible_events_db TO Disk('backups', '${current_backup_name}')"
 else
     # Query for incremental backup, using previous backup as base backup.
+    echo "=> Performing incremental backup: ${current_backup_name}"
     current_backup_name="plausible_events_db-${counter}.zip"
     previous_backup_name="plausible_events_db-$((counter - 1)).zip"
-    echo "=> Performing incremental backup: ${current_backup_name}"
+    
     query_str="BACKUP DATABASE plausible_events_db TO Disk('backups', '${current_backup_name}') SETTINGS base_backup = Disk('backups', '${previous_backup_name}')"
 fi
 echo "${query_str}"
